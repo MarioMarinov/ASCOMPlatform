@@ -23,6 +23,8 @@ using System.Runtime.InteropServices;
 using ASCOM.DeviceInterface;
 using ASCOM.Utilities;
 using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ASCOM.Simulator
 {
@@ -83,7 +85,7 @@ namespace ASCOM.Simulator
         {
             driverID = Marshal.GenerateProgIdForType(this.GetType());
             ReadProfile(); // Read device configuration from the ASCOM Profile store
-            tl = new TraceLogger("", "Simulator");
+            tl = new TraceLogger("", "SwitchSimulator");
             tl.Enabled = traceState;
             tl.LogMessage("Switch", "Starting initialisation");
 
@@ -92,10 +94,6 @@ namespace ASCOM.Simulator
 
             tl.LogMessage("Switch", "Completed initialisation");
         }
-
-        //
-        // PUBLIC COM INTERFACE ISwitchV2 IMPLEMENTATION
-        //
 
         #region Common properties and methods.
 
@@ -260,7 +258,7 @@ namespace ASCOM.Simulator
         /// <summary>
         /// list of switches used for simulation
         /// </summary>
-        internal static List<LocalSwitch> switches;
+        internal static List<SwitchDevice> switches;
 
         /// <summary>
         /// The number of switches managed by this driver
@@ -325,8 +323,6 @@ namespace ASCOM.Simulator
             return switches[id].CanWrite;
         }
 
-        #region boolean switch members
-
         /// <summary>
         /// Return the state of switch n
         /// </summary>
@@ -337,7 +333,7 @@ namespace ASCOM.Simulator
         public bool GetSwitch(short id)
         {
             Validate("GetSwitch", id);
-            LocalSwitch sw = switches[id];
+            SwitchDevice sw = switches[id];
             // returns true if the value is closer to the maximum than the minimum
             return sw.Maximum - sw.Value <= sw.Value - sw.Minimum;
         }
@@ -351,13 +347,9 @@ namespace ASCOM.Simulator
         public void SetSwitch(short id, bool state)
         {
             Validate("SetSwitch", id);
-            LocalSwitch sw = switches[id];
+            SwitchDevice sw = switches[id];
             sw.SetValue(state ? sw.Maximum : sw.Minimum, "SetSwitch");
         }
-
-        #endregion boolean switch members
-
-        #region analogue switch members
 
         /// <summary>
         /// returns the maximum value for this switch
@@ -423,7 +415,6 @@ namespace ASCOM.Simulator
             switches[id].SetValue(value, "SetSwitchValue");
         }
 
-        #endregion analogue members
         #endregion ISwitchV2 Implementation
 
         #region Private properties and methods
@@ -509,13 +500,13 @@ namespace ASCOM.Simulator
                 traceState = Convert.ToBoolean(driverProfile.GetValue(driverID, traceStateProfileName, string.Empty, traceStateDefault));
                 exposeOCHState = Convert.ToBoolean(driverProfile.GetValue(driverID, EXPOSE_OCHTAG_NAME, string.Empty, EXPOSE_OCHTAG_DEFAULT.ToString()));
 
-                switches = new List<LocalSwitch>();
+                switches = new List<SwitchDevice>();
                 int numSwitch;
                 if (int.TryParse(driverProfile.GetValue(driverID, "NumSwitches"), out numSwitch))
                 {
                     for (short i = 0; i < numSwitch; i++)
                     {
-                        switches.Add(new LocalSwitch(driverProfile, driverID, i));
+                        switches.Add(new SwitchDevice(driverProfile, driverID, i));
                     }
                 }
                 else
@@ -547,16 +538,16 @@ namespace ASCOM.Simulator
         /// </summary>
         private void LoadDefaultSwitches()
         {
-            switches.Add(new LocalSwitch("Power1") { Description = "Generic power switch" });
-            switches.Add(new LocalSwitch("Power2") { Description = "Generic Power switch" });
-            switches.Add(new LocalSwitch("Light Box", 100, 0, 10, 0) { Description = "Light box , 0 to 100%" });
-            switches.Add(new LocalSwitch("Flat Panel", 255, 0, 1, 0) { Description = "Flat panel , 0 to 255" });
-            switches.Add(new LocalSwitch("Scope Cover") { Description = "Scope cover control true is closed, false is open" });
-            switches.Add(new LocalSwitch("Scope Parked") { Description = "Scope parked switch, true if parked", CanWrite = false });
-            switches.Add(new LocalSwitch("Cloudy", 2, 0, 1, 0, false) { Description = "Cloud monitor: 0=clear, 1=light cloud, 2= heavy cloud" });
-            switches.Add(new LocalSwitch("Temperature", 30, -20, 0.1, 12, false) { Description = "Temperature in deg C" });
-            switches.Add(new LocalSwitch("Humidity", 100, 0, 1, 50, false) { Description = "Relative humidity %" });
-            switches.Add(new LocalSwitch("Raining") { Description = "Rain monitor, true if raining", CanWrite = false });
+            switches.Add(new SwitchDevice("Power1") { Description = "Generic power switch" });
+            switches.Add(new SwitchDevice("Power2") { Description = "Generic Power switch" });
+            switches.Add(new SwitchDevice("Light Box", 100, 0, 10, 0, false, 0) { Description = "Light box , 0 to 100%" });
+            switches.Add(new SwitchDevice("Flat Panel", 255, 0, 1, 0, false, 0) { Description = "Flat panel , 0 to 255" });
+            switches.Add(new SwitchDevice("Scope Cover") { Description = "Scope cover control true is closed, false is open" });
+            switches.Add(new SwitchDevice("Scope Parked") { Description = "Scope parked switch, true if parked", CanWrite = false });
+            switches.Add(new SwitchDevice("Cloudy", 2, 0, 1, 0, false, 0) { Description = "Cloud monitor: 0=clear, 1=light cloud, 2= heavy cloud" });
+            switches.Add(new SwitchDevice("Temperature", 30, -20, 0.1, 12, false, 0) { Description = "Temperature in deg C" });
+            switches.Add(new SwitchDevice("Humidity", 100, 0, 1, 50, false, 0) { Description = "Relative humidity %" });
+            switches.Add(new SwitchDevice("Raining") { Description = "Rain monitor, true if raining", CanWrite = false});
         }
 
         #endregion

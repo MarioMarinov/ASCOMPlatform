@@ -1,10 +1,6 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Threading;
-using ASCOM.Utilities;
 using ASCOM.DeviceInterface;
 
 namespace ASCOM.Simulator
@@ -147,7 +143,7 @@ namespace ASCOM.Simulator
 
         #endregion
 
-        #region ObservingConditions Implementation
+        #region IObservingConditionsV1 Implementation
 
         public double AveragePeriod
         {
@@ -234,6 +230,8 @@ namespace ASCOM.Simulator
         {
             get { return OCSimulator.WindSpeed(clientNumber); }
         }
+
         #endregion
+
     }
 }

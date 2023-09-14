@@ -139,9 +139,7 @@
               Error numbers for use by drivers.
             </summary>
             <remarks>
-              The range of permitted values falls within the class FACILTY_ITF as 
-              defined by the operating system and COM. These values will never clash with 
-              COM, RPC, or OS error codes.
+              The range of permitted values falls within the class FACILTY_ITF as defined by the operating system and COM. These values will never clash with COM, RPC, or OS error codes.
               <para>
                 Driver developers may extend this class by making use of the <c>partial</c> keyword.
               </para>
@@ -232,6 +230,19 @@
             Drivers are free to choose their own numbers starting with DriverBase, up to and including DriverMax.
             </remarks>
         </member>
+        <member name="F:ASCOM.ErrorCodes.ascomExceptions">
+            <summary>
+            Lookup dictionary mapping COM error numbers to ASCOM exception names
+            </summary>
+            <remarks>This must be kept in alignment with the exception number fields defined in this class.</remarks>
+        </member>
+        <member name="M:ASCOM.ErrorCodes.GetExceptionName(System.Exception)">
+            <summary>
+            Return the ASCOM exception name that corresponds to a COM exception
+            </summary>
+            <param name="exception">COM exception to examine</param>
+            <returns>The ASCOM name of the exception or null if the exception doesn't correspond to one of the ASCOM exceptions.</returns>
+        </member>
         <member name="T:ASCOM.InvalidOperationException">
              <summary>
              This exception should be raised by the driver to reject a command from the client.
@@ -277,8 +288,8 @@
             <summary>
             Added to keep Code Analysis happy
             </summary>
-            <param name = "info"></param>
-            <param name = "context"></param>
+            <param name = "info">Serialisation information</param>
+            <param name = "context">Streaming context.</param>
         </member>
         <member name="T:ASCOM.InvalidValueException">
             <summary>
@@ -338,8 +349,8 @@
             <summary>
             Added to keep Code Analysis happy
             </summary>
-            <param name = "info"></param>
-            <param name = "context"></param>
+            <param name = "info">Serialisation information</param>
+            <param name = "context">Streaming context.</param>
         </member>
         <member name="P:ASCOM.InvalidValueException.PropertyOrMethod">
             <summary>
@@ -461,8 +472,8 @@
             <summary>
             Added to keep Code Analysis happy
             </summary>
-            <param name = "info"></param>
-            <param name = "context"></param>
+            <param name = "info">Serialisation information</param>
+            <param name = "context">Streaming context.</param>
         </member>
         <member name="T:ASCOM.NotImplementedException">
             <summary>
@@ -504,8 +515,8 @@
             <summary>
             Added to keep Code Analysis happy
             </summary>
-            <param name = "info"></param>
-            <param name = "context"></param>
+            <param name = "info">Serialisation information</param>
+            <param name = "context">Streaming context.</param>
         </member>
         <member name="M:ASCOM.NotImplementedException.#ctor(System.String,System.String)">
             <summary>
@@ -560,8 +571,8 @@
             <summary>
             Added to keep Code Analysis happy
             </summary>
-            <param name = "info"></param>
-            <param name = "context"></param>
+            <param name = "info">Serialisation information</param>
+            <param name = "context">Streaming context.</param>
         </member>
         <member name="T:ASCOM.PropertyNotImplementedException">
             <summary>
@@ -722,8 +733,8 @@
             <summary>
             Added to keep Code Analysis happy
             </summary>
-            <param name = "info"></param>
-            <param name = "context"></param>
+            <param name = "info">Serialisation information</param>
+            <param name = "context">Streaming context.</param>
         </member>
         <member name="P:ASCOM.ValueNotSetException.PropertyOrMethod">
             <summary>

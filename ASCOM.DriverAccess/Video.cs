@@ -6,19 +6,10 @@
 using System;
 using ASCOM.DeviceInterface;
 using ASCOM.Utilities;
-
 using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
 
 namespace ASCOM.DriverAccess
 {
-    #region Video wrapper
     /// <summary>
     /// Provides universal access to Video drivers
     /// </summary>
@@ -54,18 +45,18 @@ namespace ASCOM.DriverAccess
             }
         }
 
-		#endregion
+        #endregion
 
-		#region IVideo Members
-		/// <summary>
-		/// The name of the video capture device when such a device is used.
-		/// </summary>
-		/// <exception cref="PropertyNotImplementedException">Must throw an exception if not implemented.</exception>
-		/// <exception cref="NotConnectedException">If the device is not connected</exception>
-		/// <exception cref="DriverException">An error occurred that is not described by one of the more specific ASCOM exceptions. The device did not successfully complete the request.</exception> 
-		/// <remarks>For analogue video this is usually the video capture card or dongle attached to the computer.
-		/// </remarks>
-		public string VideoCaptureDeviceName
+        #region IVideo Members
+        /// <summary>
+        /// The name of the video capture device when such a device is used.
+        /// </summary>
+        /// <exception cref="PropertyNotImplementedException">Must throw an exception if not implemented.</exception>
+        /// <exception cref="NotConnectedException">If the device is not connected</exception>
+        /// <exception cref="DriverException">An error occurred that is not described by one of the more specific ASCOM exceptions. The device did not successfully complete the request.</exception> 
+        /// <remarks>For analogue video this is usually the video capture card or dongle attached to the computer.
+        /// </remarks>
+        public string VideoCaptureDeviceName
         {
             get { return (string)memberFactory.CallMember(1, "VideoCaptureDeviceName", new Type[0], new object[0]); }
         }
@@ -811,5 +802,4 @@ namespace ASCOM.DriverAccess
         #endregion
 
     }
-    #endregion
 }

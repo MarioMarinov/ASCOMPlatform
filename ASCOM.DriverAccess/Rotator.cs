@@ -10,7 +10,6 @@ using ASCOM.Utilities;
 
 namespace ASCOM.DriverAccess
 {
-    #region Rotator wrapper
     /// <summary>
     /// Provides universal access to Rotator drivers
     /// </summary>
@@ -46,22 +45,22 @@ namespace ASCOM.DriverAccess
             }
         }
 
-		#endregion
+        #endregion
 
-		#region IRotatorV2 Members
+        #region IRotatorV2 Members
 
-		/// <summary>
-		/// Indicates whether the Rotator supports the <see cref="Reverse" /> method.
-		/// </summary>
-		/// <returns>
-		/// True if the Rotator supports the <see cref="Reverse" /> method.
-		/// </returns>
-		/// <exception cref="NotConnectedException">If the device is not connected</exception>
-		/// <exception cref="DriverException">An error occurred that is not described by one of the more specific ASCOM exceptions. The device did not successfully complete the request.</exception>
-		/// <remarks>
-		/// <p style="color:red;margin-bottom:0"><b>Must be implemented and must always return True for the IRotatorV3 interface or later.</b></p>
-		/// </remarks>
-		public bool CanReverse
+        /// <summary>
+        /// Indicates whether the Rotator supports the <see cref="Reverse" /> method.
+        /// </summary>
+        /// <returns>
+        /// True if the Rotator supports the <see cref="Reverse" /> method.
+        /// </returns>
+        /// <exception cref="NotConnectedException">If the device is not connected</exception>
+        /// <exception cref="DriverException">An error occurred that is not described by one of the more specific ASCOM exceptions. The device did not successfully complete the request.</exception>
+        /// <remarks>
+        /// <p style="color:red;margin-bottom:0"><b>Must be implemented and must always return True for the IRotatorV3 interface or later.</b></p>
+        /// </remarks>
+        public bool CanReverse
         {
             get { return (bool)memberFactory.CallMember(1, "CanReverse", new Type[] { }, new object[] { }); }
         }
@@ -306,6 +305,4 @@ namespace ASCOM.DriverAccess
         #endregion
 
     }
-
-    #endregion
 }

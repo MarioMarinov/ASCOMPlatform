@@ -3,16 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ASCOM.Common.Alpaca;
-using ASCOM.Common.Helpers;
 using ASCOM.DeviceInterface;
 using RestSharp;
-using static ASCOM.Common.Alpaca.AlpacaTools;
 using static ASCOM.DynamicRemoteClients.SharedConstants;
 
 namespace ASCOM.DynamicRemoteClients
@@ -28,15 +25,15 @@ namespace ASCOM.DynamicRemoteClients
         private const string DEVICE_TYPE = "Camera";
 
         // Instance specific variables
-        private TraceLoggerPlus TL; // Private variable to hold the trace logger object
-        private string DriverNumber; // This driver's number in the series 1, 2, 3...
-        private string DriverDisplayName; // Driver description that displays in the ASCOM Chooser.
-        private string DriverProgId; // Drivers ProgID
+        private readonly TraceLoggerPlus TL; // Private variable to hold the trace logger object
+        private readonly string DriverNumber; // This driver's number in the series 1, 2, 3...
+        private readonly string DriverDisplayName; // Driver description that displays in the ASCOM Chooser.
+        private readonly string DriverProgId; // Drivers ProgID
         private SetupDialogForm setupForm; // Private variable to hold an instance of the Driver's setup form when invoked by the user
         private RestClient client; // Client to send and receive REST style messages to / from the remote device
-        private uint clientNumber; // Unique number for this driver within the locaL server, i.e. across all drivers that the local server is serving
+        private readonly uint clientNumber; // Unique number for this driver within the locaL server, i.e. across all drivers that the local server is serving
         private bool clientIsConnected;  // Connection state of this driver
-        private string URIBase; // URI base unique to this driver
+        private readonly string URIBase; // URI base unique to this driver
 
         // Variables to hold values that can be configured by the user through the setup form
         private bool traceState = true;
@@ -53,11 +50,12 @@ namespace ASCOM.DynamicRemoteClients
         private bool manageConnectLocally;
         private ImageArrayTransferType imageArrayTransferType;
         private ImageArrayCompression imageArrayCompression;
-        private string uniqueId;
+        private readonly string uniqueId;
         private bool enableRediscovery;
         private bool ipV4Enabled;
         private bool ipV6Enabled;
         private int discoveryPort;
+        private bool trustUserGeneratedSslCertificates;
 
         #endregion
 
@@ -79,7 +77,8 @@ namespace ASCOM.DynamicRemoteClients
                 if (TL == null) TL = new TraceLoggerPlus("", string.Format(TRACELOGGER_NAME_FORMAT_STRING, DriverNumber, DEVICE_TYPE));
                 DynamicClientDriver.ReadProfile(clientNumber, TL, DEVICE_TYPE, DriverProgId,
                     ref traceState, ref debugTraceState, ref ipAddressString, ref portNumber, ref remoteDeviceNumber, ref serviceType, ref establishConnectionTimeout, ref standardDeviceResponseTimeout,
-                    ref longDeviceResponseTimeout, ref userName, ref password, ref manageConnectLocally, ref imageArrayTransferType, ref imageArrayCompression, ref uniqueId, ref enableRediscovery, ref ipV4Enabled, ref ipV6Enabled, ref discoveryPort);
+                    ref longDeviceResponseTimeout, ref userName, ref password, ref manageConnectLocally, ref imageArrayTransferType, ref imageArrayCompression, ref uniqueId, ref enableRediscovery,
+                    ref ipV4Enabled, ref ipV6Enabled, ref discoveryPort, ref trustUserGeneratedSslCertificates);
                 TL.LogMessage(clientNumber, DEVICE_TYPE, string.Format("Trace state: {0}, Debug Trace State: {1}, TraceLogger Debug State: {2}", traceState, debugTraceState, TL.DebugTraceState));
                 Version version = Assembly.GetEntryAssembly().GetName().Version;
                 TL.LogMessage(clientNumber, DEVICE_TYPE, "Starting initialisation, Version: " + version.ToString());
@@ -88,7 +87,7 @@ namespace ASCOM.DynamicRemoteClients
                 TL.LogMessage(clientNumber, DEVICE_TYPE, "This instance's unique client number: " + clientNumber);
 
                 DynamicClientDriver.ConnectToRemoteDevice(ref client, ipAddressString, portNumber, establishConnectionTimeout, serviceType, TL, clientNumber, DriverProgId, DEVICE_TYPE,
-                                                          standardDeviceResponseTimeout, userName, password, uniqueId, enableRediscovery, ipV6Enabled, ipV6Enabled, discoveryPort);
+                                                          standardDeviceResponseTimeout, userName, password, uniqueId, enableRediscovery, ipV6Enabled, ipV6Enabled, discoveryPort, trustUserGeneratedSslCertificates);
 
                 URIBase = string.Format("{0}{1}/{2}/{3}/", AlpacaConstants.API_URL_BASE, AlpacaConstants.API_VERSION_V1, DEVICE_TYPE, remoteDeviceNumber.ToString());
                 TL.LogMessage(clientNumber, DEVICE_TYPE, "This devices's base URI: " + URIBase);
@@ -246,6 +245,7 @@ namespace ASCOM.DynamicRemoteClients
                     setupForm.IpV4Enabled = ipV4Enabled;
                     setupForm.IpV6Enabled = ipV6Enabled;
                     setupForm.DiscoveryPort = discoveryPort;
+                    setupForm.TrustUserGeneratedSslCertificates = trustUserGeneratedSslCertificates;
 
                     TL.LogMessage(clientNumber, "SetupDialog", "Showing Dialogue");
                     var result = setupForm.ShowDialog();
@@ -273,16 +273,18 @@ namespace ASCOM.DynamicRemoteClients
                         ipV4Enabled = setupForm.IpV4Enabled;
                         ipV6Enabled = setupForm.IpV6Enabled;
                         discoveryPort = setupForm.DiscoveryPort;
+                        trustUserGeneratedSslCertificates = setupForm.TrustUserGeneratedSslCertificates;
 
                         // Write the changed values to the Profile
                         TL.LogMessage(clientNumber, "SetupDialog", "Writing new values to profile");
                         DynamicClientDriver.WriteProfile(clientNumber, TL, DEVICE_TYPE, DriverProgId, traceState, debugTraceState, ipAddressString, portNumber, remoteDeviceNumber, serviceType,
-                            establishConnectionTimeout, standardDeviceResponseTimeout, longDeviceResponseTimeout, userName, password, manageConnectLocally, imageArrayTransferType, imageArrayCompression, uniqueId, enableRediscovery, ipV4Enabled, ipV6Enabled, discoveryPort);
+                            establishConnectionTimeout, standardDeviceResponseTimeout, longDeviceResponseTimeout, userName, password, manageConnectLocally, imageArrayTransferType, imageArrayCompression, uniqueId, enableRediscovery,
+                            ipV4Enabled, ipV6Enabled, discoveryPort, trustUserGeneratedSslCertificates);
 
                         // Establish new host and device parameters
                         TL.LogMessage(clientNumber, "SetupDialog", "Establishing new host and device parameters");
                         DynamicClientDriver.ConnectToRemoteDevice(ref client, ipAddressString, portNumber, establishConnectionTimeout, serviceType, TL, clientNumber, DriverProgId, DEVICE_TYPE,
-                                                                  standardDeviceResponseTimeout, userName, password, uniqueId, enableRediscovery, ipV4Enabled, ipV6Enabled, discoveryPort);
+                                                                  standardDeviceResponseTimeout, userName, password, uniqueId, enableRediscovery, ipV4Enabled, ipV6Enabled, discoveryPort, trustUserGeneratedSslCertificates);
                     }
                     else TL.LogMessage(clientNumber, "SetupDialog", "Dialogue closed with Cancel status");
                 }
@@ -524,7 +526,7 @@ namespace ASCOM.DynamicRemoteClients
             get
             {
                 DynamicClientDriver.SetClientTimeout(client, longDeviceResponseTimeout);
-                return DynamicClientDriver.GetValue<Array>(clientNumber, client, URIBase, TL, AlpacaConstants.IMAGE_ARRAY_METHOD_NAME, imageArrayTransferType, imageArrayCompression, MemberTypes.Property);
+                return DynamicClientDriver.GetValue<Array>(clientNumber, client, URIBase, TL, SharedConstants.IMAGE_ARRAY_METHOD_NAME, imageArrayTransferType, imageArrayCompression, MemberTypes.Property);
             }
         }
 

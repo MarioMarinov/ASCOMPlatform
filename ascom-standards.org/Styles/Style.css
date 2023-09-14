@@ -81,6 +81,11 @@ hr {
 	margin-top: -20px
 }
 
+.alert {
+	color: black;
+	background: yellow;
+}
+
 .underline {
 	text-decoration: underline;
 }

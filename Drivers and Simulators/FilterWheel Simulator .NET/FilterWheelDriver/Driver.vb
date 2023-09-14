@@ -56,7 +56,8 @@ Public Class FilterWheel
     '
     ' PUBLIC COM INTERFACE IFilterWheel IMPLEMENTATION
     '
-#Region "IAscomDriver"
+#Region "Common methods"
+
     Public Property Connected() As Boolean Implements IFilterWheelV2.Connected
         Get
             Connected = SimulatedHardware.Connected
@@ -95,9 +96,7 @@ Public Class FilterWheel
             Return "Filter Wheel Simulator .NET"
         End Get
     End Property
-#End Region
 
-#Region "IDeviceControl"
     Public Function Action(ByVal ActionName As String, ByVal ActionParameters As String) As String Implements IFilterWheelV2.Action
         Throw New ASCOM.MethodNotImplementedException("Action is not implemented in this driver")
     End Function
@@ -133,7 +132,7 @@ Public Class FilterWheel
     End Sub
 #End Region
 
-#Region "IFilterWheel Members"
+#Region "IFilterWheelV2 Members"
 
     Public Property Position() As Short Implements IFilterWheelV2.Position
         Get
@@ -162,16 +161,16 @@ Public Class FilterWheel
 
 #End Region
 
-    '---------------------------------------------------------------------
-    '
-    ' check_connected() - Raise an error if the focuser is not connected
-    '
-    '---------------------------------------------------------------------
-    Private Sub check_connected()
+#Region "Support code"
 
+    ''' <summary>
+    ''' Raise an error if the focuser is not connected
+    ''' </summary>
+    Private Sub check_connected()
         If Not SimulatedHardware.Connected Then _
         Throw New DriverException(MSG_NOT_CONNECTED, SCODE_NOT_CONNECTED)
-
     End Sub
+
+#End Region
 
 End Class

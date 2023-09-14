@@ -19,11 +19,9 @@ using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using ASCOM.Utilities;
-using ASCOM.DriverAccess;
 namespace ASCOM.Simulator
 {
     /// <summary>
@@ -422,8 +420,6 @@ namespace ASCOM.Simulator
 
         public static short InterfaceVersion(int clientNumber)
         {
-            CheckConnected("InterfaceVersion");
-
             short interfaceVersion = 1;
             TL.LogMessage(clientNumber, "InterfaceVersion", interfaceVersion.ToString());
             return interfaceVersion;

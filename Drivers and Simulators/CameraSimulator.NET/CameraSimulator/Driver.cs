@@ -48,6 +48,8 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Runtime;
+using System.Threading;
 
 namespace ASCOM.Simulator
 {
@@ -1336,11 +1338,15 @@ namespace ASCOM.Simulator
                     Log.LogMessage("ImageArrayVariant", "No Image Available");
                     throw new ASCOM.InvalidOperationException("There is no image available");
                 }
+
+                // Clear out any previous memory allocations
+                ReleaseArrayMemory();
+
                 // convert to variant
                 if (sensorType == SensorType.Color)
                 {
                     imageArrayVariantColour = new object[imageArrayColour.GetLength(0), imageArrayColour.GetLength(1), 3];
-                    Parallel.For(0, imageArray.GetLength(0), i =>
+                    Parallel.For(0, imageArrayColour.GetLength(0), i =>
                     //for (int i = 0; i < imageArrayColour.GetLength(1); i++)
                     {
                         for (int j = 0; j < imageArrayColour.GetLength(1); j++)
@@ -1717,7 +1723,7 @@ namespace ASCOM.Simulator
         public void SetupDialog()
         {
             if (connected)
-                throw new NotConnectedException("Can't set the CCD properties when connected");
+                throw new InvalidOperationException("Can't set the CCD properties when connected");
             using (SetupDialogForm F = new SetupDialogForm())
             {
                 try
@@ -1804,6 +1810,9 @@ namespace ASCOM.Simulator
                                                     numY.ToString(CultureInfo.InvariantCulture),
                                                     string.Format(CultureInfo.InvariantCulture, "1 to {0}", cameraYSize / binY));
             }
+
+            // Clear out any previous memory allocations
+            ReleaseArrayMemory();
 
             // set up the things to do at the start of the exposure
             imageReady = false;
@@ -2499,6 +2508,20 @@ namespace ASCOM.Simulator
         #endregion
 
         #region Private
+
+        /// <summary>
+        /// Release memory allocated to the large arrays on the large object heap.
+        /// </summary>
+        private void ReleaseArrayMemory()
+        {
+            // Clear out any previous memory allocations
+            //imageArray= null;
+            //imageArrayColour= null;
+            imageArrayVariant = null;
+            imageArrayVariantColour = null;
+            GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+            GC.Collect(2, GCCollectionMode.Forced, true, true);
+        }
 
         private void ReadFromProfile()
         {
@@ -3391,7 +3414,7 @@ namespace ASCOM.Simulator
             if (!imageReady)
             {
                 Log.LogMessage(identifier, "image not ready");
-                throw new NotConnectedException("Can't read " + identifier + " when no image is ready");
+                throw new InvalidOperationException("Can't read " + identifier + " when no image is ready");
             }
         }
 

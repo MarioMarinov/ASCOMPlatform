@@ -7,11 +7,9 @@
 using System;
 using ASCOM.DeviceInterface;
 using ASCOM.Utilities;
-using System.Globalization;
 
 namespace ASCOM.DriverAccess
 {
-    #region Focuser wrapper
     /// <summary>
     /// Provides universal access to Focuser drivers
     /// </summary>
@@ -47,16 +45,16 @@ namespace ASCOM.DriverAccess
             }
         }
 
-		#endregion
+        #endregion
 
-		#region IFocuser Members
+        #region IFocuser Members
 
-		/// <summary>
-		/// True if the focuser is capable of absolute position; that is, being commanded to a specific step location.
-		/// </summary>
-		/// <exception cref="NotConnectedException">If the device is not connected.</exception>
-		/// <exception cref="DriverException">An error occurred that is not described by one of the more specific ASCOM exceptions. The device did not successfully complete the request.</exception> 
-		public bool Absolute
+        /// <summary>
+        /// True if the focuser is capable of absolute position; that is, being commanded to a specific step location.
+        /// </summary>
+        /// <exception cref="NotConnectedException">If the device is not connected.</exception>
+        /// <exception cref="DriverException">An error occurred that is not described by one of the more specific ASCOM exceptions. The device did not successfully complete the request.</exception> 
+        public bool Absolute
         {
             get { return Convert.ToBoolean(memberFactory.CallMember(1, "Absolute", new Type[] { }, new object[] { })); }
         }
@@ -245,7 +243,6 @@ namespace ASCOM.DriverAccess
         }
 
         #endregion
-    }
 
-    #endregion
+    }
 }
