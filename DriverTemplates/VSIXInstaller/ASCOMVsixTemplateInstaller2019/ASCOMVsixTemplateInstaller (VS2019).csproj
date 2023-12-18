@@ -124,7 +124,7 @@
     <VsixSignCommand>$(VsixSignTool) sign /f $(SIGN_CERTIFICATE) /p $(SIGN_PASSWORD) /sha1 $(SIGN_CERT_HASH) /fd sha256</VsixSignCommand>
   </PropertyGroup>
   <Target Name="AfterBuild" DependsOnTargets="CoreCompile">
-    <Message Text="Signing $(TargetVsixContainer)" />
-    <Exec Command="$(VsixSignCommand) &quot;$(MSBuildProjectDirectory)\$(TargetVsixContainer)&quot;" />
+    <Message Text="NOT Signing $(TargetVsixContainer)" />
+    <!-- <Exec Command="$(VsixSignCommand) &quot;$(MSBuildProjectDirectory)\$(TargetVsixContainer)&quot;" /> -->
   </Target>
 </Project>
