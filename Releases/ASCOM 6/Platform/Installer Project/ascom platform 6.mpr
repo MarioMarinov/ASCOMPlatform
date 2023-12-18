@@ -2215,7 +2215,7 @@ ASCOM Platform 6.6 SP2
 ASCOM Platform 6.6 SP2 - Installation
 ASCOM Initiative
 All rights reserved. http://www.ascom-standards.org
-{7D228553-BC33-4CA0-A837-CE8E4AFDDDA5}
+{CD0FB5C2-1673-44AD-8ABF-B102EBB8F5A6}
 ASCOM Initiative
 ASCOM Initiative
 https://ascomtalk.groups.io/g/Help
@@ -2226,7 +2226,7 @@ AscomPlatform662
 TRUE
 TRUE
 |Sectigo_20231013130838
-|C:\CodeSigningCertificate\petercodesign.pfx
+|
 http://timestamp.digicert.com|C:\CodeSigningCertificate\peter2023.cer
 https://ascom-standards.org
 UAC=requireAdministrator,CACHESOURCES=TRUE,MSI_ALL=FALSE,VM_TARGETFOLDER=%TEMP%,VM_INSTALL_COMMANDLINE=/s,"VM_UNINSTALL_COMMANDLINE=/s MODIFY=FALSE REMOVE=TRUE","VM_UNITTEST=C:\Program Files (x86)\InstallAware X6 Creators Update\unit.exe",LOADOLDDATA=TRUE,SIGN_ALL=DEFAULT,SHA256ONLY=TRUE,NODROP=TRUE
